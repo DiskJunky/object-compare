@@ -10,6 +10,11 @@ namespace ObjectCompare;
 internal class Program
 {
     /// <summary>
+    /// The character width gap between the compared object property/value pairs.
+    /// </summary>
+    private const int SEP_SIZE = 4;
+
+    /// <summary>
     /// THe main starting point for the test program.
     /// </summary>
     /// <param name="args">Optional, any command line arguments supplied to the program.</param>
@@ -26,20 +31,32 @@ internal class Program
         IPaddedDictionary dtTextValues = new PaddedDictionary<DateTime>(testDt);
         IPaddedDictionary dtoTextValues = new PaddedDictionary<DateTimeOffset>(testDto);
         // TODO:
-        // * padd out the right side of 'textBlock' to longest property value before merging dtoTextBlock
+        // * pad out the right side of 'textBlock' to longest property value before merging dtoTextBlock
         // * sort/merge/align the Datetime -> DateTimeOffset properties so we can see what's new
 
 
         // create a local short-hand function that calls the same method on
         // both dictionaries
-        Action<Func<IPaddedDictionary, string>> writeBoth = get => WritePair(get(dtTextValues), get(dtoTextValues));
+        Action<Func<IPaddedDictionary, string>> writeBoth = get => WritePair(get(dtTextValues), 
+                                                                             get(dtoTextValues));
         
         // display headers
         writeBoth(g => g.GetHeader());
         writeBoth(g => g.GetHeaderSeparator());
         
 
-        // merge side by side
+        // merge each property side by side, with properties the same name on the same line
+        int leftKeyIndex = 0;
+        int rightKeyIndex = 0;
+        while (leftKeyIndex < dtTextValues.Length /*
+                && rightKeyIndex <= dtoTextValues.Length*/)
+        {
+            // get the current property names
+            var leftKey = dtTextValues.KeyList[leftKeyIndex];
+            WriteLine($"Key: {leftKey}");
+            leftKeyIndex++;
+        }
+
         // var lines = new List<string>();
         // for (int i = 0; i < textBlock.Length; i++)
         // {
@@ -55,5 +72,5 @@ internal class Program
     /// <param name="left">The left text.</param>
     /// <param name="right">The right text.</param>
     private static void WritePair(string left, string right)
-        => WriteLine(left + "".PadRight(4) + right);
+        => WriteLine(left + "".PadRight(SEP_SIZE) + right);
 }

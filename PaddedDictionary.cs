@@ -37,6 +37,36 @@ public interface IPaddedDictionary
     int ValueSeparatorSize { get; }
 
     /// <summary>
+    /// Gets the size of the collection.
+    /// </summary>
+    int Length { get; }
+
+    /// <summary>
+    /// Gets the key collection.
+    /// </summary>
+    SortedDictionary<string, string>.KeyCollection Keys { get; }
+
+    /// <summary>
+    /// Gets the value for the specified key.
+    /// </summary>
+    /// <param name="key">The key to get a value for.</param>
+    /// <returns>The value for the specified key.</returns>
+    string this[string key] { get; }
+
+    /// <summary>
+    /// Gets or sets the list of keys, listed by index, as they appear in base dictionary.
+    /// </summary>
+    List<string> KeyList { get; }
+
+
+    /// <summary>
+    /// Returns if the specified key exists in the collection.
+    /// </summary>
+    /// <param name="key">The key to lookup.</param>
+    /// <returns><c>true</c> if the key exists in the collection <c>false</c> otherwise.</returns>
+    bool ContainsKey(string key);
+
+    /// <summary>
     /// Gets the header to use for the collection.
     /// </summary>
     /// <returns>The header to use for the collection.</returns>
@@ -47,6 +77,13 @@ public interface IPaddedDictionary
     /// </summary>
     /// <returns>The horizontal separator for the property names/values.</returns>
     string GetHeaderSeparator();
+
+    /// <summary>
+    /// Return the key at the specified index in the collection.
+    /// </summary>
+    /// <param name="index">The index to get the key from.</param>
+    /// <returns>The key at the specified index.</returns>
+    string GetKeyByIndex(int index);
 }
 
 /// <summary>
@@ -66,7 +103,10 @@ public class PaddedDictionary<T> : SortedDictionary<string, string>,
     /// <summary>
     /// Default constructor.
     /// </summary>
-    public PaddedDictionary() {}
+    public PaddedDictionary()
+    {
+        KeyList = new List<string>();
+    }
 
     /// <summary>
     /// Instantiates the dictionary with keys/values from the specified <paramref name="source"/>.
@@ -100,6 +140,8 @@ public class PaddedDictionary<T> : SortedDictionary<string, string>,
     /// <inheritdoc/>
     public int ValueSeparatorSize => 1;
 
+    /// <inheritdoc/>
+    public int Length => Keys.Count;
 
     /// <inheritdoc/>
     public string GetHeader()
@@ -116,9 +158,20 @@ public class PaddedDictionary<T> : SortedDictionary<string, string>,
     /// <inheritdoc/>
     public string GetHeaderSeparator()
         => "".PadRight(DisplayWidth, '-');
+
+    /// <inheritdoc/>
+    public string GetKeyByIndex(int index)
+        => KeyList[index];
+
+    /// <inheritdoc/>
+    public List<string> KeyList { get; protected set; }
+    #endregion
+
+    #region Properties
     #endregion
 
     #region Public Methods
+
     /// <summary>
     /// Initializes the dictionary, iterating over the collection and calculating
     /// metrics.
@@ -127,15 +180,18 @@ public class PaddedDictionary<T> : SortedDictionary<string, string>,
     public void Initialize(T source)
     {
         Clear();
+        KeyList = new List<string>();
         if (source == null) return;
+
+        // record dictionary stats
         SourceType = typeof(T);
-        
         MaxKeySize = 0;
         MaxValueSize = 0;
 
         var propertyValues = ObjectHelper.GetPropertyValues(source);
         if (propertyValues.Keys.Count < 1) return;
 
+        // normalize the key and property values
         foreach (string key in propertyValues.Keys)
         {
             int keyLength = key!.Length;
@@ -147,6 +203,9 @@ public class PaddedDictionary<T> : SortedDictionary<string, string>,
 
             Add(key, value);
         }
+
+        // record the list of keys
+        KeyList = Keys.ToList();
     }
     #endregion
 }
