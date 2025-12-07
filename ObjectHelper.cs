@@ -6,7 +6,7 @@ using System.Xml.Linq;
 namespace ObjectCompare;
 
 /// <summary>
-/// THis class contains helper methods that apply across all objects.
+/// This class contains helper methods that apply across all objects.
 /// </summary>
 public static class ObjectHelper
 {
