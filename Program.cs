@@ -32,11 +32,11 @@ internal class Program
 
         // create a local short-hand function that calls the same method on
         // both dictionaries
-        Action<Func<IPaddedDictionary, string>> writeFromBoth = get => WritePair(dtTextValues, dtoTextValues, get);
+        Action<Func<IPaddedDictionary, string>> writeBoth = get => WritePair(get(dtTextValues), get(dtoTextValues));
         
         // display headers
-        writeFromBoth(g => g.GetHeader());
-        writeFromBoth(g => g.GetHeaderSeparator());
+        writeBoth(g => g.GetHeader());
+        writeBoth(g => g.GetHeaderSeparator());
         
 
         // merge side by side
@@ -54,11 +54,6 @@ internal class Program
     /// </summary>
     /// <param name="left">The left text.</param>
     /// <param name="right">The right text.</param>
-    private static void WriteTextPair(string left, string right)
+    private static void WritePair(string left, string right)
         => WriteLine(left + "".PadRight(4) + right);
-
-    private static void WritePair(IPaddedDictionary left, 
-                                  IPaddedDictionary right,
-                                  Func<IPaddedDictionary, string> get)
-        => WriteTextPair(get(left), get(right));
 }
