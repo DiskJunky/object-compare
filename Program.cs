@@ -25,9 +25,6 @@ internal class Program
 
         var testDt = DateTime.UtcNow;
         var testDto = DateTimeOffset.UtcNow;
-        WriteLine($"Turning {nameof(DateTime)} into text;");
-
-
         IPaddedDictionary dtTextValues = new PaddedDictionary<DateTime>(testDt);
         IPaddedDictionary dtoTextValues = new PaddedDictionary<DateTimeOffset>(testDto);
 
@@ -53,9 +50,11 @@ internal class Program
                             : dtoTextValues.Length;
         while (mainIndex < totalSize)
         {
-            // get the property names at the overall index
-            var leftKey = leftKeyIndex < dtTextValues.Length ? dtTextValues.KeyList[leftKeyIndex] : "";
-            var rightKey = rightKeyIndex < dtoTextValues.Length ? dtoTextValues.KeyList[rightKeyIndex] : "";
+            // get the property names at the current, respective index
+            var leftKey = leftKeyIndex < dtTextValues.Length 
+                            ? dtTextValues.KeyList[leftKeyIndex] : string.Empty;
+            var rightKey = rightKeyIndex < dtoTextValues.Length 
+                            ? dtoTextValues.KeyList[rightKeyIndex] : string.Empty;
 
             // are they the same
             var leftTrimmedKey = leftKey.Trim();
@@ -70,12 +69,12 @@ internal class Program
                     break;
 
                 case 1:     // right takes precedence
-                    WritePair(" ".PadRight(dtTextValues.DisplayWidth), dtoTextValues.GetPair(rightKey));
+                    WritePair(PadSpace(dtTextValues.DisplayWidth), dtoTextValues.GetPair(rightKey));
                     rightKeyIndex++;
                     break;
 
                 case -1:    // left takes precedence
-                    WritePair(dtTextValues.GetPair(leftKey), " ".PadRight(dtoTextValues.DisplayWidth));
+                    WritePair(dtTextValues.GetPair(leftKey), PadSpace(dtoTextValues.DisplayWidth));
                     leftKeyIndex++;
                     break;
             }
@@ -83,6 +82,14 @@ internal class Program
             mainIndex++;
         }
     }
+
+    /// <summary>
+    /// This returns a set of spaces to the specified <paramref name="length"/>.
+    /// </summary>
+    /// <param name="length">The length of spaces to return.</param>
+    /// <returns>The generated set of spaces.</returns>
+    private static string PadSpace(int length)
+        => " ".PadRight(length);
 
     /// <summary>
     /// Writes the left and right text components, separated by a defined space width.

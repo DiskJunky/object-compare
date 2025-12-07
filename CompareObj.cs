@@ -7,7 +7,7 @@ namespace ObjectCompare;
 public class CompareObj<T>
 {
     /// <summary>
-    /// Instantiates the object with comparison dteails from the supplied instance.
+    /// Instantiates the object with comparison details from the supplied instance.
     /// </summary>
     /// <param name="instance">The instance to get property values from.</param>
     /// <exception cref="ArgumentNullException">Throw if <paramref name="instance"/> 

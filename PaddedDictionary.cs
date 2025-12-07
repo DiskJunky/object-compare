@@ -96,7 +96,7 @@ public class PaddedDictionary<T> : SortedDictionary<string, string>,
 
     #region Methods
     /// <summary>
-    /// This performs a space-insensitsive search of the key name in the collection
+    /// This performs a space-insensitive search of the key name in the collection
     /// and returns the actual full key, if found, <see cref="string.Empty"/> otherwise.
     /// </summary>
     /// <param name="key">The key to look up.</param>
