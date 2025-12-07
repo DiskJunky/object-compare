@@ -30,14 +30,9 @@ internal class Program
         // * sort/merge/align the Datetime -> DateTimeOffset properties so we can see what's new
 
 
-        const int separatorLength = 4;      // horizontal space between objects
-        // int dtColSize = dtTextValues.DisplayWidth;
-        // int dtoColSize = dtoTextValues.DisplayWidth;
-
         // display headers
-        WriteLine(dtTextValues.GetHeader(nameof(DateTime)) 
-                    + " ".PadRight(separatorLength, ' ')
-                    + dtoTextValues.GetHeader(nameof(DateTimeOffset)));
+        WritePair(dtTextValues.GetHeader(), dtoTextValues.GetHeader());
+        WritePair(dtTextValues.GetHeaderSeparator(), dtoTextValues.GetHeaderSeparator());
 
         // merge side by side
         // var lines = new List<string>();
@@ -48,6 +43,14 @@ internal class Program
 
         // WriteLine(string.Join($"{newLine}", lines));
     }
+
+    /// <summary>
+    /// Writes the left and right text components, separated by a defined space width.
+    /// </summary>
+    /// <param name="left">The left text.</param>
+    /// <param name="right">The right text.</param>
+    private static void WritePair(string left, string right)
+        => WriteLine(left + "".PadRight(4) + right);
 
     private static string DictToString(Dictionary<string, string> dict)
     {

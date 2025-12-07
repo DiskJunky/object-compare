@@ -67,20 +67,24 @@ public class PaddedDictionary<T> : SortedDictionary<string, string>
     /// <summary>
     /// Gets the header to use for the collection.
     /// </summary>
-    /// <param name="title">The title text to use in the header. If larger than 
-    /// <see cref="DisplayWidth"/>, then it is trimmed to that length.
     /// <returns>The header to use for the collection.</returns>
-    public string GetHeader(string title)
+    public string GetHeader()
     {
+        var title = SourceTypeName;
         int titleLength = title!.Length;
         if (titleLength == 0) title = string.Empty;
         if (titleLength > DisplayWidth) title = title.Substring(0, titleLength);
 
-        var newLine = Environment.NewLine;
         var header = title.PadRight(DisplayWidth, ' ');
-
         return header;
     }
+
+    /// <summary>
+    /// Returns a horizontal separator for use in text display.
+    /// </summary>
+    /// <returns>The horizontal separator for the property names/values.</returns>
+    public string GetHeaderSeparator()
+        => "".PadRight(DisplayWidth, '-');
 
     /// <summary>
     /// Initializes the dictionary, iterating over the collection and calculating
