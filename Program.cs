@@ -20,19 +20,29 @@ internal class Program
     /// <param name="args">Optional, any command line arguments supplied to the program.</param>
     public static void Main(string[] args)
     {
-        var newLine = Environment.NewLine;
-        WriteLine($"Comparing DateTime and DateTimeOffset objects...{newLine}");
-
         var testDt = DateTime.UtcNow;
         var testDto = DateTimeOffset.UtcNow;
         IPaddedDictionary dtTextValues = new PaddedDictionary<DateTime>(testDt);
         IPaddedDictionary dtoTextValues = new PaddedDictionary<DateTimeOffset>(testDto);
 
+        Compare(dtTextValues, dtoTextValues);
+    }
+
+    /// <summary>
+    /// This compares the two property value collections.
+    /// </summary>
+    /// <param name="leftTextValues">The left property value collection.</param>
+    /// <param name="rightTextValues">The right property value collection.</param>
+    private static void Compare(IPaddedDictionary leftTextValues, IPaddedDictionary rightTextValues)
+    {
+        var newLine = Environment.NewLine;
+        WriteLine($"Comparing {leftTextValues.SourceTypeName} and {rightTextValues.SourceTypeName} objects...{newLine}");
+
         // create a local short-hand function that calls the same method on
         // both dictionaries
         Action<Func<IPaddedDictionary, string>> writeBoth = get => {
-            var left = get(dtTextValues);
-            var right = get(dtoTextValues);
+            var left = get(leftTextValues);
+            var right = get(rightTextValues);
             WritePair(left, right);
         };
         
@@ -45,16 +55,16 @@ internal class Program
         int leftKeyIndex = 0;
         int rightKeyIndex = 0;
         int mainIndex = 0;
-        int totalSize = dtTextValues.Length > dtoTextValues.Length 
-                            ? dtTextValues.Length 
-                            : dtoTextValues.Length;
+        int totalSize = leftTextValues.Length > rightTextValues.Length 
+                            ? leftTextValues.Length 
+                            : rightTextValues.Length;
         while (mainIndex < totalSize)
         {
             // get the property names at the current, respective index
-            var leftKey = leftKeyIndex < dtTextValues.Length 
-                            ? dtTextValues.KeyList[leftKeyIndex] : string.Empty;
-            var rightKey = rightKeyIndex < dtoTextValues.Length 
-                            ? dtoTextValues.KeyList[rightKeyIndex] : string.Empty;
+            var leftKey = leftKeyIndex < leftTextValues.Length 
+                            ? leftTextValues.KeyList[leftKeyIndex] : string.Empty;
+            var rightKey = rightKeyIndex < rightTextValues.Length 
+                            ? rightTextValues.KeyList[rightKeyIndex] : string.Empty;
 
             // are they the same
             var leftTrimmedKey = leftKey.Trim();
@@ -69,12 +79,12 @@ internal class Program
                     break;
 
                 case 1:     // right takes precedence
-                    WritePair(PadSpace(dtTextValues.DisplayWidth), dtoTextValues.GetPair(rightKey));
+                    WritePair(PadSpace(leftTextValues.DisplayWidth), rightTextValues.GetPair(rightKey));
                     rightKeyIndex++;
                     break;
 
                 case -1:    // left takes precedence
-                    WritePair(dtTextValues.GetPair(leftKey), PadSpace(dtoTextValues.DisplayWidth));
+                    WritePair(leftTextValues.GetPair(leftKey), PadSpace(rightTextValues.DisplayWidth));
                     leftKeyIndex++;
                     break;
             }
