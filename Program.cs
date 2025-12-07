@@ -30,10 +30,14 @@ internal class Program
         // * sort/merge/align the Datetime -> DateTimeOffset properties so we can see what's new
 
 
+        // create a local short-hand function that calls the same method on
+        // both dictionaries
+        Action<Func<IPaddedDictionary, string>> writeFromBoth = get => WritePair(dtTextValues, dtoTextValues, get);
+        
         // display headers
-        //Func<IPaddedDictionary, string> write = p => WritePair(dtTextValues)
-        WritePair(dtTextValues, dtoTextValues, d => d.GetHeader());
-        WritePair(dtTextValues.GetHeaderSeparator(), dtoTextValues.GetHeaderSeparator());
+        writeFromBoth(g => g.GetHeader());
+        writeFromBoth(g => g.GetHeaderSeparator());
+        
 
         // merge side by side
         // var lines = new List<string>();
@@ -50,28 +54,11 @@ internal class Program
     /// </summary>
     /// <param name="left">The left text.</param>
     /// <param name="right">The right text.</param>
-    private static void WritePair(string left, string right)
+    private static void WriteTextPair(string left, string right)
         => WriteLine(left + "".PadRight(4) + right);
 
     private static void WritePair(IPaddedDictionary left, 
                                   IPaddedDictionary right,
                                   Func<IPaddedDictionary, string> get)
-        => WritePair(get(left), get(right));
-
-    private static string DictToString(Dictionary<string, string> dict)
-    {
-        if (dict == null || dict.Keys.Count < 1) return string.Empty;
-
-        // calculate the longest key
-        var sb = new StringBuilder();
-        var padLength = dict.Keys.Max(k => k?.Length) ?? 0;
-        var keys = dict.Keys.ToList();
-        for (int i = 0; i < keys.Count; i++)
-        {
-            sb.AppendLine($"{keys[i].PadRight(padLength, ' ')}: {dict[keys[i]]}");
-            //sb.AppendLine($"{keys[i].PadRight(padLength, ' ')}: {dict[keys[i]]}");
-        }
-
-        return sb.ToString();
-    }
+        => WriteTextPair(get(left), get(right));
 }
