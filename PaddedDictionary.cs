@@ -84,6 +84,8 @@ public interface IPaddedDictionary
     /// <param name="index">The index to get the key from.</param>
     /// <returns>The key at the specified index.</returns>
     string GetKeyByIndex(int index);
+
+    string GetPair(string key);
 }
 
 /// <summary>
@@ -144,6 +146,9 @@ public class PaddedDictionary<T> : SortedDictionary<string, string>,
     public int Length => Keys.Count;
 
     /// <inheritdoc/>
+    public List<string> KeyList { get; protected set; }
+
+    /// <inheritdoc/>
     public string GetHeader()
     {
         var title = SourceTypeName;
@@ -163,15 +168,13 @@ public class PaddedDictionary<T> : SortedDictionary<string, string>,
     public string GetKeyByIndex(int index)
         => KeyList[index];
 
-    /// <inheritdoc/>
-    public List<string> KeyList { get; protected set; }
+    public string GetPair(string key)
+    {
+        return $"{key} {this[key]}";
+    }
     #endregion
 
-    #region Properties
-    #endregion
-
-    #region Public Methods
-
+    #region Methods
     /// <summary>
     /// Initializes the dictionary, iterating over the collection and calculating
     /// metrics.
@@ -191,7 +194,7 @@ public class PaddedDictionary<T> : SortedDictionary<string, string>,
         var propertyValues = ObjectHelper.GetPropertyValues(source);
         if (propertyValues.Keys.Count < 1) return;
 
-        // normalize the key and property values
+        // determine the key and property lengths
         foreach (string key in propertyValues.Keys)
         {
             int keyLength = key!.Length;
@@ -200,12 +203,30 @@ public class PaddedDictionary<T> : SortedDictionary<string, string>,
             string value = propertyValues[key];
             int valueLength = value!.Length;
             if (valueLength > MaxValueSize) MaxValueSize = valueLength;
+        }
 
-            Add(key, value);
+        // normalize the key/property representations
+        foreach (string key in propertyValues.Keys)
+        {
+            var keyText = Pad(key, MaxKeySize);
+            string value = propertyValues[key];
+            value = Pad(value, MaxValueSize);
+
+            Add(keyText, value);
         }
 
         // record the list of keys
         KeyList = Keys.ToList();
+    }
+
+    public string Pad(string source, int length)
+    {
+        if (length < 0) throw new ArgumentException(nameof(length), $"{nameof(length)} must be greater than zero.");
+        if (source == null) throw new ArgumentNullException(nameof(source));
+
+        if (source.Length > length) source = source.Substring(0, length);
+
+        return source.PadRight(length, ' ');        
     }
     #endregion
 }

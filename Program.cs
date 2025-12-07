@@ -48,22 +48,30 @@ internal class Program
         // merge each property side by side, with properties the same name on the same line
         int leftKeyIndex = 0;
         int rightKeyIndex = 0;
-        while (leftKeyIndex < dtTextValues.Length /*
-                && rightKeyIndex <= dtoTextValues.Length*/)
+        int mainIndex = 0;
+        int totalSize = dtTextValues.Length > dtoTextValues.Length 
+                            ? dtTextValues.Length 
+                            : dtoTextValues.Length;
+        while (mainIndex < totalSize)
         {
-            // get the current property names
-            var leftKey = dtTextValues.KeyList[leftKeyIndex];
-            WriteLine($"Key: {leftKey}");
-            leftKeyIndex++;
+            // get the property names at the overall index
+            var leftKey = mainIndex < dtTextValues.Length ? dtTextValues.KeyList[mainIndex] : "";
+            var rightKey = mainIndex < dtoTextValues.Length ? dtoTextValues.KeyList[mainIndex] : "";
+
+            // are they the same
+            if (leftKey.Equals(rightKey))
+            {
+                writeBoth(g => g.GetPair(leftKey));
+            }
+            else
+            {
+                // what do we do here...?
+
+            }
+            
+            mainIndex++;
         }
 
-        // var lines = new List<string>();
-        // for (int i = 0; i < textBlock.Length; i++)
-        // {
-        //     lines.Add($"{textBlock[i]}    {dtoTextBlock[i]}");
-        // }
-
-        // WriteLine(string.Join($"{newLine}", lines));
     }
 
     /// <summary>
