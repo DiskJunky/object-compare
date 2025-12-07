@@ -82,7 +82,6 @@ internal class Program
             
             mainIndex++;
         }
-
     }
 
     /// <summary>

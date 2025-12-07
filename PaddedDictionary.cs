@@ -160,6 +160,17 @@ public class PaddedDictionary<T> : SortedDictionary<string, string>,
         KeyList = Keys.ToList();
     }
 
+    /// <summary>
+    /// Pad the supplied text out to the specified <paramref name="length"/> with
+    /// spaces.
+    /// </summary>
+    /// <param name="source">The text to pad.</param>
+    /// <param name="length">The length to pad to.</param>
+    /// <returns>The space-padded text.</returns>
+    /// <exception cref="ArgumentException">Thrown if <paramref name="length"/> is 
+    /// less than zero.</exception>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="source"/> 
+    /// is <c>null</c>.</exception>
     public string Pad(string source, int length)
     {
         if (length < 0) throw new ArgumentException(nameof(length), $"{nameof(length)} must be greater than zero.");
