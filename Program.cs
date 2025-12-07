@@ -22,13 +22,22 @@ internal class Program
         var testDto = DateTimeOffset.UtcNow;
         WriteLine($"Turning {nameof(DateTime)} into text;");
 
-        var dtValues = new CompareObj<DateTime>(testDt);
-        var dtoValues = new CompareObj<DateTimeOffset>(testDto);
 
+        var dtTextValues = new PaddedDictionary<DateTime>(testDt);
+        var dtoTextValues = new PaddedDictionary<DateTimeOffset>(testDto);
         // TODO:
         // * padd out the right side of 'textBlock' to longest property value before merging dtoTextBlock
         // * sort/merge/align the Datetime -> DateTimeOffset properties so we can see what's new
 
+
+        const int separatorLength = 4;      // horizontal space between objects
+        // int dtColSize = dtTextValues.DisplayWidth;
+        // int dtoColSize = dtoTextValues.DisplayWidth;
+
+        // display headers
+        WriteLine(dtTextValues.GetHeader(nameof(DateTime)) 
+                    + " ".PadRight(separatorLength, ' ')
+                    + dtoTextValues.GetHeader(nameof(DateTimeOffset)));
 
         // merge side by side
         // var lines = new List<string>();
