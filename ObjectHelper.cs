@@ -22,6 +22,7 @@ namespace TestDateTIme
         /// <returns>The property values of the  object.</returns>
         public static IDictionary<string, string> GetPropertyValues<T>(T o)
         {
+            const string NULL_TEXT = "<null>";
             IDictionary<string, string> propValues = new Dictionary<string, string>();
 
             if (o == null) return propValues;
@@ -42,7 +43,7 @@ namespace TestDateTIme
                 || enumerableType.IsAssignableFrom(type))
             {
                 // we just have a vanilla value type
-                propValues.Add(string.Empty, o!.ToString());
+                propValues.Add(string.Empty, o.ToString() ?? NULL_TEXT);
                 return propValues;
             }
 
@@ -69,7 +70,7 @@ namespace TestDateTIme
             foreach (var m in members)
             {
                 var memberType = isStruct && !isDateType ? ((FieldInfo)m).FieldType : ((PropertyInfo)m).PropertyType;
-                object memberValue = null;
+                object? memberValue = null;
                 if (isStruct && !isDateType)
                 {
                     memberValue = ((FieldInfo)m).GetValue(o);
