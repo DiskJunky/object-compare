@@ -21,7 +21,7 @@ internal class Program
     public static void Main(string[] args)
     {
         var newLine = Environment.NewLine;
-        WriteLine($"Testing stringified objects...{newLine}");
+        WriteLine($"Comparing DateTime and DateTimeOffset objects...{newLine}");
 
         var testDt = DateTime.UtcNow;
         var testDto = DateTimeOffset.UtcNow;

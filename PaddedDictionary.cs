@@ -83,35 +83,39 @@ public class PaddedDictionary<T> : SortedDictionary<string, string>,
     /// <inheritdoc/>
     public string GetPair(string key)
     {
-        var list = KeyList;
-        return $"{key} {this[key]}";
+        var actualKey = GetActualKey(key);
+        return $"{actualKey} {base[actualKey]}";
     }
 
     /// <inheritdoc/>
     public new string this[string key]
     {
-        get
-        {
-            // perform a space-insensitive lookup of the key value
-            var trimmedKey = key!.Trim();
-            var actualKey = string.Empty;
-            foreach (var testKey in Keys)
-            {
-                if (testKey.Trim().Equals(trimmedKey))
-                {
-                    // we have a match
-                    actualKey = testKey;
-                    break;
-                }
-            }
-
-            // now perform the actual lookup
-            return base[actualKey];
-        }
+        get => base[GetActualKey(key)];
     }
     #endregion
 
     #region Methods
+    /// <summary>
+    /// This performs a space-insensitsive search of the key name in the collection
+    /// and returns the actual full key, if found, <see cref="string.Empty"/> otherwise.
+    /// </summary>
+    /// <param name="key">The key to look up.</param>
+    /// <returns>The actual key if found, <see cref="string.Empty"/> otherwise.</returns>
+    private string GetActualKey(string key)
+    {
+        var trimmedKey = key!.Trim();
+        foreach (var testKey in Keys)
+        {
+            if (testKey.Trim().Equals(trimmedKey))
+            {
+                // we have a match
+                return testKey;
+            }
+        }
+
+        return string.Empty;
+    }
+
     /// <summary>
     /// Initializes the dictionary, iterating over the collection and calculating
     /// metrics.
