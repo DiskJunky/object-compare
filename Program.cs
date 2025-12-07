@@ -23,15 +23,16 @@ internal class Program
         WriteLine($"Turning {nameof(DateTime)} into text;");
 
 
-        var dtTextValues = new PaddedDictionary<DateTime>(testDt);
-        var dtoTextValues = new PaddedDictionary<DateTimeOffset>(testDto);
+        IPaddedDictionary dtTextValues = new PaddedDictionary<DateTime>(testDt);
+        IPaddedDictionary dtoTextValues = new PaddedDictionary<DateTimeOffset>(testDto);
         // TODO:
         // * padd out the right side of 'textBlock' to longest property value before merging dtoTextBlock
         // * sort/merge/align the Datetime -> DateTimeOffset properties so we can see what's new
 
 
         // display headers
-        WritePair(dtTextValues.GetHeader(), dtoTextValues.GetHeader());
+        //Func<IPaddedDictionary, string> write = p => WritePair(dtTextValues)
+        WritePair(dtTextValues, dtoTextValues, d => d.GetHeader());
         WritePair(dtTextValues.GetHeaderSeparator(), dtoTextValues.GetHeaderSeparator());
 
         // merge side by side
@@ -51,6 +52,11 @@ internal class Program
     /// <param name="right">The right text.</param>
     private static void WritePair(string left, string right)
         => WriteLine(left + "".PadRight(4) + right);
+
+    private static void WritePair(IPaddedDictionary left, 
+                                  IPaddedDictionary right,
+                                  Func<IPaddedDictionary, string> get)
+        => WritePair(get(left), get(right));
 
     private static string DictToString(Dictionary<string, string> dict)
     {

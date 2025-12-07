@@ -1,6 +1,55 @@
 namespace ObjectCompare;
 
 /// <summary>
+/// This defines the properties and methods for an instance of <see cref="SortedDictionary{string, string}"/>
+/// used to retrieve property names and values.
+/// </summary>
+public interface IPaddedDictionary
+{
+    /// <summary>
+    /// Gets the source data type.
+    /// </summary>
+    Type? SourceType { get; }
+
+    /// <summary>
+    /// Gets the name of the source type.
+    /// </summary>
+    string SourceTypeName { get; }
+
+    /// <summary>
+    /// Gets the maximum horizontal text display size 
+    /// </summary>
+    int DisplayWidth { get; }
+
+    /// <summary>
+    /// Gets the maximum text key value size.
+    /// </summary>
+    int MaxKeySize { get; }
+
+    /// <summary>
+    /// Gets the maximum text value size.
+    /// </summary>
+    int MaxValueSize { get; }
+
+    /// <summary>
+    /// Gets the size in characters to separate keys/values when displayed horizontally.
+    /// </summary>
+    int ValueSeparatorSize { get; }
+
+    /// <summary>
+    /// Gets the header to use for the collection.
+    /// </summary>
+    /// <returns>The header to use for the collection.</returns>
+    string GetHeader();
+
+    /// <summary>
+    /// Returns a horizontal separator for use in text display.
+    /// </summary>
+    /// <returns>The horizontal separator for the property names/values.</returns>
+    string GetHeaderSeparator();
+}
+
+/// <summary>
 /// This class takes in an instance of <see cref="IDictionary{string, string}"/> and provides
 /// accessors for the <see cref="IDictionary.Keys"/> and <see cref="IDictionary.Values"/> properties
 /// that text forms that are padded to the maximum key/value size of the dictionary's respective
@@ -9,7 +58,9 @@ namespace ObjectCompare;
 /// <see cref="IDictionary.Values"/> collection.
 /// </summary>
 /// <typeparam name="T">The instance data type to get property values for.</typeparam>
-public class PaddedDictionary<T> : SortedDictionary<string, string>
+public class PaddedDictionary<T> : SortedDictionary<string, string>,
+                                   IPaddedDictionary
+                                   
 {
     #region Constructors
     /// <summary>
@@ -28,46 +79,29 @@ public class PaddedDictionary<T> : SortedDictionary<string, string>
     }
     #endregion
 
-    #region Properties
-    /// <summary>
-    /// Gets the source data type.
-    /// </summary>
+    #region IPaddedDictionary Implementation
+    /// <inheritdoc/>
     public Type? SourceType { get; protected set;}
 
-    /// <summary>
-    /// Gets the name of the source type.
-    /// </summary>
+    /// <inheritdoc/>
     public string SourceTypeName => SourceType!.Name;
 
-    /// <summary>
-    /// Gets the maximum horizontal text display size 
-    /// </summary>
+    /// <inheritdoc/>
     public int DisplayWidth => MaxKeySize 
                                 + ValueSeparatorSize 
                                 + MaxValueSize;
  
-    /// <summary>
-    /// Gets the maximum text key value size.
-    /// </summary>
+    /// <inheritdoc/>
     public int MaxKeySize { get; protected set; }
 
-    /// <summary>
-    /// Gets the maximum text value size.
-    /// </summary>
+    /// <inheritdoc/>
     public int MaxValueSize {get; protected set; }
 
-    /// <summary>
-    /// Gets the size in characters to separate keys/values when displayed horizontally.
-    /// </summary>
-    public int ValueSeparatorSize = 1;
+    /// <inheritdoc/>
+    public int ValueSeparatorSize => 1;
 
-    #endregion
 
-    #region Methods
-    /// <summary>
-    /// Gets the header to use for the collection.
-    /// </summary>
-    /// <returns>The header to use for the collection.</returns>
+    /// <inheritdoc/>
     public string GetHeader()
     {
         var title = SourceTypeName;
@@ -79,13 +113,12 @@ public class PaddedDictionary<T> : SortedDictionary<string, string>
         return header;
     }
 
-    /// <summary>
-    /// Returns a horizontal separator for use in text display.
-    /// </summary>
-    /// <returns>The horizontal separator for the property names/values.</returns>
+    /// <inheritdoc/>
     public string GetHeaderSeparator()
         => "".PadRight(DisplayWidth, '-');
+    #endregion
 
+    #region Public Methods
     /// <summary>
     /// Initializes the dictionary, iterating over the collection and calculating
     /// metrics.
