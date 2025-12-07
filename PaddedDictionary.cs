@@ -80,9 +80,34 @@ public class PaddedDictionary<T> : SortedDictionary<string, string>,
     public string GetKeyByIndex(int index)
         => KeyList[index];
 
+    /// <inheritdoc/>
     public string GetPair(string key)
     {
+        var list = KeyList;
         return $"{key} {this[key]}";
+    }
+
+    /// <inheritdoc/>
+    public new string this[string key]
+    {
+        get
+        {
+            // perform a space-insensitive lookup of the key value
+            var trimmedKey = key!.Trim();
+            var actualKey = string.Empty;
+            foreach (var testKey in Keys)
+            {
+                if (testKey.Trim().Equals(trimmedKey))
+                {
+                    // we have a match
+                    actualKey = testKey;
+                    break;
+                }
+            }
+
+            // now perform the actual lookup
+            return base[actualKey];
+        }
     }
     #endregion
 

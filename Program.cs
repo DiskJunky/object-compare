@@ -30,15 +30,14 @@ internal class Program
 
         IPaddedDictionary dtTextValues = new PaddedDictionary<DateTime>(testDt);
         IPaddedDictionary dtoTextValues = new PaddedDictionary<DateTimeOffset>(testDto);
-        // TODO:
-        // * pad out the right side of 'textBlock' to longest property value before merging dtoTextBlock
-        // * sort/merge/align the Datetime -> DateTimeOffset properties so we can see what's new
-
 
         // create a local short-hand function that calls the same method on
         // both dictionaries
-        Action<Func<IPaddedDictionary, string>> writeBoth = get => WritePair(get(dtTextValues), 
-                                                                             get(dtoTextValues));
+        Action<Func<IPaddedDictionary, string>> writeBoth = get => {
+            var left = get(dtTextValues);
+            var right = get(dtoTextValues);
+            WritePair(left, right);
+        };
         
         // display headers
         writeBoth(g => g.GetHeader());
@@ -59,7 +58,7 @@ internal class Program
             var rightKey = mainIndex < dtoTextValues.Length ? dtoTextValues.KeyList[mainIndex] : "";
 
             // are they the same
-            if (leftKey.Equals(rightKey))
+            if (leftKey.Trim().Equals(rightKey.Trim()))
             {
                 writeBoth(g => g.GetPair(leftKey));
             }
