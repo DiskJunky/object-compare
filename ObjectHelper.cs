@@ -1,19 +1,4 @@
-﻿#region FILE HEADER
-/*
- *      Copyright (c) 2025 Becton Dickinson Corporation.
- *
- *  All rights reserved. Becton Dickinson source code is an unpublished
- *  work and the use of a copyright notice does not imply otherwise.
- *  This source code contains confidential, trade secret material
- *  of Becton Dickinson. Any attempt or participation in deciphering,
- *  decoding, reverse engineering or in any way altering the source
- *  code is strictly prohibited, unless the prior written consent of
- *  Becton Dickinson is obtained.  This is proprietary and confidential
- *  to Becton Dickinson.
- */
-#endregion
-
-using System.Collections;
+﻿using System.Collections;
 using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
@@ -26,21 +11,23 @@ namespace TestDateTIme
     public static class ObjectHelper
     {
         /// <summary>
-        /// This stringifies a given object by iterating over its top-level properties and producing a
-        /// human-readable single line string. Collections are represented by their name and number of items.
-        /// Other properties are represented by their name and a call to "ToString()" on their value (if not null).
-        /// Any objects of value type (assuming non-structs) are written out with just their value.
+        /// This gets the property names and associated values at a shallow
+        /// level of the object. Collections are retrieved with their collection
+        /// count and any <c>null</c> are reported back as such in text form. If
+        /// the object/value doesn't have any property values, then an empty
+        /// <see cref="IDictionary"/> instance is returned.
         /// </summary>
-        /// <param name="o">The object to stringify.</param>
-        /// <typeparam name="T">The type of object to stringify.</typeparam>
-        /// <returns>The stringified object.</returns>
-        public static string Stringify<T>(T o)
+        /// <param name="o">The object to get the property values for.</param>
+        /// <typeparam name="T">The type of object to to get the property values for.</typeparam>
+        /// <returns>The property values of the  object.</returns>
+        public static IDictionary<string, string> GetPropertyValues<T>(T o)
         {
-            if (o == null) return "null";
+            IDictionary<string, string> propValues = new Dictionary<string, string>();
+
+            if (o == null) return propValues;
 
             // we have a value, see if it's
             var type = typeof(T);
-            var memberDescriptions = new Dictionary<string, string>();
             var decimalType = typeof(decimal);
             var isDateType = typeof(DateTime).Equals(type) 
                                 || typeof(DateTimeOffset).Equals(type);
@@ -55,7 +42,8 @@ namespace TestDateTIme
                 || enumerableType.IsAssignableFrom(type))
             {
                 // we just have a vanilla value type
-                return o.ToString();
+                propValues.Add(string.Empty, o!.ToString());
+                return propValues;
             }
 
             // we have an object or struct. A struct is a special case as it's a value type but has
@@ -103,7 +91,7 @@ namespace TestDateTIme
                 {
                     if (memberValue == null)
                     {
-                        memberDescriptions.Add(m.Name, $"null");
+                        propValues.Add(m.Name, $"null");
                     }
                     else
                     {
@@ -114,41 +102,24 @@ namespace TestDateTIme
                             count++;
                         }
 
-                        memberDescriptions.Add(m.Name, $"<collection[{count}]>");
+                        propValues.Add(m.Name, $"<collection[{count}]>");
                     }
                 }
                 else
                 {
                     if (memberValue == null)
                     {
-                        memberDescriptions.Add(m.Name, $"null");
+                        propValues.Add(m.Name, $"null");
                     }
                     else
                     {
-                        memberDescriptions.Add(m.Name, $"{memberValue}");
+                        propValues.Add(m.Name, $"{memberValue}");
                     }
                 }
             }
 
-            return DictToString(memberDescriptions);
-            //return string.Join("\n", memberDescriptions);
+            return propValues;
         }
 
-        private static string DictToString(Dictionary<string, string> dict)
-        {
-            if (dict == null || dict.Keys.Count < 1) return string.Empty;
-
-            // calculate the longest key
-            var sb = new StringBuilder();
-            var padLength = dict.Keys.Max(k => k?.Length) ?? 0;
-            var keys = dict.Keys.ToList();
-            for (int i = 0; i < keys.Count; i++)
-            {
-                sb.AppendLine($"{keys[i].PadRight(padLength, ' ')}: {dict[keys[i]]}");
-                //sb.AppendLine($"{keys[i].PadRight(padLength, ' ')}: {dict[keys[i]]}");
-            }
-
-            return sb.ToString();
-        }
     }
 }
