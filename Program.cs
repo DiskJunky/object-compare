@@ -1,8 +1,8 @@
 ﻿using System.Text;
-using static TestDateTIme.ObjectHelper;
+using static ObjectCompare.ObjectHelper;
 using static System.Console;
 
-namespace TestDateTIme;
+namespace ObjectCompare;
 
 /// <summary>
 /// This is the program entry point.
