@@ -54,18 +54,30 @@ internal class Program
         while (mainIndex < totalSize)
         {
             // get the property names at the overall index
-            var leftKey = mainIndex < dtTextValues.Length ? dtTextValues.KeyList[mainIndex] : "";
-            var rightKey = mainIndex < dtoTextValues.Length ? dtoTextValues.KeyList[mainIndex] : "";
+            var leftKey = leftKeyIndex < dtTextValues.Length ? dtTextValues.KeyList[leftKeyIndex] : "";
+            var rightKey = rightKeyIndex < dtoTextValues.Length ? dtoTextValues.KeyList[rightKeyIndex] : "";
 
             // are they the same
-            if (leftKey.Trim().Equals(rightKey.Trim()))
+            var leftTrimmedKey = leftKey.Trim();
+            var rightTrimmedKey = rightKey.Trim();
+            var compareResult = leftTrimmedKey.CompareTo(rightTrimmedKey);
+            switch (compareResult)
             {
-                writeBoth(g => g.GetPair(leftKey));
-            }
-            else
-            {
-                // what do we do here...?
+                case 0:     // equal
+                    writeBoth(g => g.GetPair(leftKey));
+                    leftKeyIndex++;
+                    rightKeyIndex++;
+                    break;
 
+                case 1:     // right takes precedence
+                    WritePair(" ".PadRight(dtTextValues.DisplayWidth), dtoTextValues.GetPair(rightKey));
+                    rightKeyIndex++;
+                    break;
+
+                case -1:    // left takes precedence
+                    WritePair(dtTextValues.GetPair(leftKey), " ".PadRight(dtoTextValues.DisplayWidth));
+                    leftKeyIndex++;
+                    break;
             }
             
             mainIndex++;
