@@ -33,17 +33,24 @@ internal class Program
     /// </summary>
     /// <param name="leftTextValues">The left property value collection.</param>
     /// <param name="rightTextValues">The right property value collection.</param>
-    private static void Compare(IPaddedDictionary leftTextValues, IPaddedDictionary rightTextValues)
+    /// <param name="write">The function to write out to. Defaults to writing 
+    /// to <see cref="Console.WriteLine"/></param>
+    private static void Compare(IPaddedDictionary leftTextValues, 
+                                IPaddedDictionary rightTextValues,
+                                Action<string>? write = null)
     {
+        // if we've no writer, write out to the console by default
+        if (write == null) write = WriteLine;
+
         var newLine = Environment.NewLine;
-        WriteLine($"Comparing {leftTextValues.SourceTypeName} and {rightTextValues.SourceTypeName} objects...{newLine}");
+        write($"Comparing {leftTextValues.SourceTypeName} and {rightTextValues.SourceTypeName} objects...{newLine}");
 
         // create a local short-hand function that calls the same method on
         // both dictionaries
         Action<Func<IPaddedDictionary, string>> writeBoth = get => {
             var left = get(leftTextValues);
             var right = get(rightTextValues);
-            WritePair(left, right);
+            WritePair(left, right, write);
         };
         
         // display headers
@@ -79,12 +86,16 @@ internal class Program
                     break;
 
                 case 1:     // right takes precedence
-                    WritePair(PadSpace(leftTextValues.DisplayWidth), rightTextValues.GetPair(rightKey));
+                    WritePair(PadSpace(leftTextValues.DisplayWidth), 
+                              rightTextValues.GetPair(rightKey),
+                              write);
                     rightKeyIndex++;
                     break;
 
                 case -1:    // left takes precedence
-                    WritePair(leftTextValues.GetPair(leftKey), PadSpace(rightTextValues.DisplayWidth));
+                    WritePair(leftTextValues.GetPair(leftKey), 
+                              PadSpace(rightTextValues.DisplayWidth),
+                              write);
                     leftKeyIndex++;
                     break;
             }
@@ -106,6 +117,6 @@ internal class Program
     /// </summary>
     /// <param name="left">The left text.</param>
     /// <param name="right">The right text.</param>
-    private static void WritePair(string left, string right)
-        => WriteLine(left + "".PadRight(SEP_SIZE) + right);
+    private static void WritePair(string left, string right, Action<string> write)
+        => write(left + "".PadRight(SEP_SIZE) + right);
 }
