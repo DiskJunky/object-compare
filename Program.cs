@@ -1,6 +1,4 @@
-﻿using System.Text;
-using static ObjectCompare.ObjectHelper;
-using static System.Console;
+﻿using static System.Console;
 
 namespace ObjectCompare;
 
@@ -34,7 +32,7 @@ internal class Program
     /// <param name="leftTextValues">The left property value collection.</param>
     /// <param name="rightTextValues">The right property value collection.</param>
     /// <param name="write">The function to write out to. Defaults to writing 
-    /// to <see cref="Console.WriteLine"/></param>
+    /// to <see cref="Console.WriteLine(string)"/></param>
     private static void Compare(IPaddedDictionary leftTextValues, 
                                 IPaddedDictionary rightTextValues,
                                 Action<string>? write = null)
@@ -45,17 +43,18 @@ internal class Program
         var newLine = Environment.NewLine;
         write($"Comparing {leftTextValues.SourceTypeName} and {rightTextValues.SourceTypeName} objects...{newLine}");
 
-        // create a local short-hand function that calls the same method on
+        // create a local shorthand function that calls the same method on
         // both dictionaries
-        Action<Func<IPaddedDictionary, string>> writeBoth = get => {
+        void WriteBoth(Func<IPaddedDictionary, string> get)
+        {
             var left = get(leftTextValues);
             var right = get(rightTextValues);
             WritePair(left, right, write);
-        };
-        
+        }
+
         // display headers
-        writeBoth(g => g.GetHeader());
-        writeBoth(g => g.GetHeaderSeparator());
+        WriteBoth(g => g.GetHeader());
+        WriteBoth(g => g.GetHeaderSeparator());
         
 
         // merge each property side by side, with properties the same name on the same line
@@ -76,11 +75,11 @@ internal class Program
             // are they the same
             var leftTrimmedKey = leftKey.Trim();
             var rightTrimmedKey = rightKey.Trim();
-            var compareResult = leftTrimmedKey.CompareTo(rightTrimmedKey);
+            var compareResult = String.Compare(leftTrimmedKey, rightTrimmedKey, StringComparison.InvariantCulture);
             switch (compareResult)
             {
                 case 0:     // equal
-                    writeBoth(g => g.GetPair(leftKey));
+                    WriteBoth(g => g.GetPair(leftKey));
                     leftKeyIndex++;
                     rightKeyIndex++;
                     break;
@@ -117,6 +116,7 @@ internal class Program
     /// </summary>
     /// <param name="left">The left text.</param>
     /// <param name="right">The right text.</param>
+    /// <param name="write">The function/action to use to write out the string.</param>
     private static void WritePair(string left, string right, Action<string> write)
         => write(left + "".PadRight(SEP_SIZE) + right);
 }

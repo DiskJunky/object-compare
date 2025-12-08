@@ -1,7 +1,5 @@
 ﻿using System.Collections;
 using System.Reflection;
-using System.Text;
-using System.Xml.Linq;
 
 namespace ObjectCompare;
 
@@ -18,7 +16,7 @@ public static class ObjectHelper
     /// <see cref="IDictionary"/> instance is returned.
     /// </summary>
     /// <param name="o">The object to get the property values for.</param>
-    /// <typeparam name="T">The type of object to to get the property values for.</typeparam>
+    /// <typeparam name="T">The type of object to get the property values for.</typeparam>
     /// <returns>The property values of the  object.</returns>
     public static IDictionary<string, string> GetPropertyValues<T>(T o)
     {
@@ -30,8 +28,8 @@ public static class ObjectHelper
         // we have a value, see if it's
         var type = typeof(T);
         var decimalType = typeof(decimal);
-        var isDateType = typeof(DateTime).Equals(type) 
-                            || typeof(DateTimeOffset).Equals(type);
+        var isDateType = typeof(DateTime) == type 
+                         || typeof(DateTimeOffset) == type;
         var isStruct = type.IsValueType
                         && !type.IsEnum
                         && !type.IsPrimitive
@@ -71,14 +69,14 @@ public static class ObjectHelper
         {
             // what property/field type are we dealing with
             var memberType = isStruct && !isDateType ? ((FieldInfo)m).FieldType : ((PropertyInfo)m).PropertyType;
-            object? memberValue = null;
+            object? memberValue;
             if (isStruct && !isDateType)
             {
                 // get the field value
                 memberValue = ((FieldInfo)m).GetValue(o);
             }
             else if ((enumerableType.IsAssignableFrom(memberType)
-                        && !stringType.Equals(memberType))
+                        && !(stringType == memberType))
                         || ((PropertyInfo)m).GetIndexParameters().Length > 0)
             {
                 // skip over enumerable/indexer properties

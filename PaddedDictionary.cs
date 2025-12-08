@@ -2,11 +2,12 @@ namespace ObjectCompare;
 
 /// <summary>
 /// This class takes in an instance of <see cref="IDictionary{string, string}"/> and provides
-/// accessors for the <see cref="IDictionary.Keys"/> and <see cref="IDictionary.Values"/> properties
-/// that text forms that are padded to the maximum key/value size of the dictionary's respective
-/// collections. E.g., if the max length of all keys is 10, then each normalized key returned
-/// is right-padded with spaces to a length of 10. The same applies to instance's 
-/// <see cref="IDictionary.Values"/> collection.
+/// accessors for the <see cref="IDictionary{string, string}.Keys"/> and
+/// <see cref="IDictionary{string, string}.Values"/> properties that text forms that are
+/// padded to the maximum key/value size of the dictionary's respective collections.
+/// E.g., if the max length of all keys is 10, then each normalized key returned is
+/// right-padded with spaces to a length of 10. The same applies to instance's 
+/// <see cref="IDictionary{string, string}.Values"/> collection.
 /// </summary>
 /// <typeparam name="T">The instance data type to get property values for.</typeparam>
 public class PaddedDictionary<T> : SortedDictionary<string, string>,
@@ -64,7 +65,7 @@ public class PaddedDictionary<T> : SortedDictionary<string, string>,
     public string GetHeader()
     {
         var title = SourceTypeName;
-        int titleLength = title!.Length;
+        int titleLength = title.Length;
         if (titleLength == 0) title = string.Empty;
         if (titleLength > DisplayWidth) title = title.Substring(0, titleLength);
 
@@ -103,7 +104,7 @@ public class PaddedDictionary<T> : SortedDictionary<string, string>,
     /// <returns>The actual key if found, <see cref="string.Empty"/> otherwise.</returns>
     private string GetActualKey(string key)
     {
-        var trimmedKey = key!.Trim();
+        var trimmedKey = key.Trim();
         foreach (var testKey in Keys)
         {
             if (testKey.Trim().Equals(trimmedKey))
@@ -138,11 +139,11 @@ public class PaddedDictionary<T> : SortedDictionary<string, string>,
         // determine the key and property lengths
         foreach (string key in propertyValues.Keys)
         {
-            int keyLength = key!.Length;
+            int keyLength = key.Length;
             if (keyLength > MaxKeySize) MaxKeySize = keyLength;
 
             string value = propertyValues[key];
-            int valueLength = value!.Length;
+            int valueLength = value.Length;
             if (valueLength > MaxValueSize) MaxValueSize = valueLength;
         }
 
