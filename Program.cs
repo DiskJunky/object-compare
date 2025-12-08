@@ -110,7 +110,7 @@ internal class Program
     /// <param name="length">The length of spaces to return.</param>
     /// <returns>The generated set of spaces.</returns>
     private static string PadSpace(int length)
-        => " ".PadRight(length);
+        => "".PadRight(length);
 
     /// <summary>
     /// Writes the left and right text components, separated by a defined space width.
