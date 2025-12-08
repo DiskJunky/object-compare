@@ -15,7 +15,7 @@ internal class Program
     private const int SEP_SIZE = 4;
 
     /// <summary>
-    /// THe main starting point for the test program.
+    /// The main starting point for the test program.
     /// </summary>
     /// <param name="args">Optional, any command line arguments supplied to the program.</param>
     public static void Main(string[] args)
